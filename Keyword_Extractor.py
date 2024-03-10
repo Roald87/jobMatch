@@ -43,7 +43,7 @@ class Extractor:
             words = self.clean_phrase(line).split(" ")
             ngrams = self.ngrams(words, n)
             for tup in ngrams:
-                phrase = " ".join(tup)
+                phrase = " ".join(word.strip() for word in tup if len(word) > 0)
                 if phrase in results.keys():
                     results[phrase] += 1
                 else:
@@ -51,7 +51,7 @@ class Extractor:
         return results
 
     def clean_phrase(self, line):
-        return re.sub(r"[^\w\s]", "", line.replace("\n", "").replace("\t", "").lower())
+        return re.sub(r"[^\w\s]", "", line.strip().lower())
 
     def ngrams(self, input_list, n):
         return list(zip(*[input_list[i:] for i in range(n)]))
