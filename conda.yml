@@ -1,0 +1,5 @@
+name: job-match312
+channels:
+  - defaults
+dependencies:
+  - python=3.12

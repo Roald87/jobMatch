@@ -4,14 +4,16 @@ If you would like to try it out, all you would need to do is download the code f
 
 Copy the job description in a txt file and save it with a descriptive name (e.g. tesla_job_description.txt). Do the same with your resume (e.g. my_resume.txt).
 
-$git clone https://github.com/danielgulloa/jobMatch
-
-$cp tesla_job_description.txt my_resume.txt jobMatch
-
-$python Keyword_Extractor.py tesla_jobdescription.txt my_resume.txt
-
+```
+$ git clone https://github.com/danielgulloa/jobMatch
+$ conda create -f conda.yml 
+$ pip install -r requirements.txt
+$ cp tesla_job_description.txt my_resume.txt jobMatch
+$ python Keyword_Extractor.py tesla_jobdescription.txt my_resume.txt
+```
 A file will be created, called Extracted_Keywords.csv, which will have 7 columns and many rows. Here are the first 6 rows of an example I ran:
 
+```
 ,type,skill,job,cv,m1,m2
 
 55,soft,experience,5,2,3,3
@@ -23,7 +25,7 @@ A file will be created, called Extracted_Keywords.csv, which will have 7 columns
 17,hard,apache,4,1,3,3
 
 40,hard,data,3,15,-12,0
-
+```
 
 The first column is just an index, then the second one is the type of skill ("hard","soft", or "general" for general language in the job description). The third column is the name of the skill, then the fourth is how many times the skill appears in the job description, and the fifth is how many times it appears in your resume. The rows in the file are sorted by 'job' and then by 'cv'. The last two columns are a "distance" measure. m1 is simply (job - cv), which tells you how many more times the skill appears in the job description than in the resume. This value could be negative (hence the quotation marks on "distance"), and the goal is to have the sum of m1 as small (or negative) as possible. The value of m2 is obtained as max(0,job-cv). In this case, adding the skill many times in your resume does not increase the overall similarity between the job description and the resume. If you have different ideas on what measures to include, please let me know to include them in the github version.
 
