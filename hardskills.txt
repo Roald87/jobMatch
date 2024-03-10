@@ -45,6 +45,8 @@ R
 C
 C++
 C#
+F#
+Julia
 Ruby
 Ruby on Rails
 Weka
@@ -251,3 +253,6 @@ medical device
 International Work
 System Requirements
 Engineering discipline
+TwinCAT
+PLC programming
+PLC
