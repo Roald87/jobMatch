@@ -133,7 +133,7 @@ class Extractor:
             "VBP",
             "VBZ",
         ]
-        graylist = ["you", "will"]
+        graylist = "you will are be can want is do may thats come".split()
         tmp_table = []
         # look if the skills are mentioned in the job description and then in your cv
 
