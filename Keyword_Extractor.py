@@ -83,7 +83,7 @@ class Extractor:
         )
         df_sorted = df.sort_values(by=["job", "cv"], ascending=[False, False])
         df_sorted.to_csv(
-            self.outFile, columns=["type", "skill", "job", "cv"], index=False
+            self.outFile, columns=["type", "skill", "job", "cv", "m1", "m2"], index=False
         )
 
     def printMeasures(self):
