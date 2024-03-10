@@ -5,7 +5,8 @@ If you would like to try it out, all you would need to do is download the code f
 Copy the job description in a txt file and save it with a descriptive name (e.g. tesla_job_description.txt). Do the same with your resume (e.g. my_resume.txt).
 
 ```
-$ git clone https://github.com/danielgulloa/jobMatch
+$ git clone https://github.com/roald87/jobMatch
+$ cd jobMatch
 $ conda create -f conda.yml 
 $ pip install -r requirements.txt
 $ cp tesla_job_description.txt my_resume.txt jobMatch
