@@ -6,6 +6,9 @@ import nltk
 import operator
 import math
 
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+
 class Extractor():
 	def __init__(self):
 		self.softskills=self.load_skills('softskills.txt')
