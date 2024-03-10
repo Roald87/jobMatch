@@ -16,15 +16,10 @@ A file will be created, called Extracted_Keywords.csv, which will have 7 columns
 
 ```
 ,type,skill,job,cv,m1,m2
-
 55,soft,experience,5,2,3,3
-
 60,general,one,5,0,5,5
-
 63,general,learning,4,3,1,1
-
 17,hard,apache,4,1,3,3
-
 40,hard,data,3,15,-12,0
 ```
 
