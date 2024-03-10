@@ -97,21 +97,21 @@ class Extractor:
         v2 = [self.table[cv][3] for cv in range(n_rows)]
         print("Measure 3 (cosine sim): ", str(self.measure3(v1, v2)))
 
-        for type in ["hard", "soft", "general"]:
+        for skill in ["hard", "soft", "general"]:
             v1 = [
-                self.table[jb][2] for jb in range(n_rows) if self.table[jb][0] == type
+                self.table[jb][2] for jb in range(n_rows) if self.table[jb][0] == skill
             ]
             v2 = [
-                self.table[cv][3] for cv in range(n_rows) if self.table[cv][0] == type
+                self.table[cv][3] for cv in range(n_rows) if self.table[cv][0] == skill
             ]
             print(
                 "Cosine similarity for "
-                + type
+                + skill
                 + " skills: "
                 + str(self.measure3(v1, v2))
             )
 
-    def makeTable(self):
+    def make_table(self):
         # I am interested in verbs, nouns, adverbs, and adjectives
         parts_of_speech = [
             "CD",
@@ -189,7 +189,7 @@ class Extractor:
 
 def main():
     K = Extractor()
-    K.makeTable()
+    K.make_table()
     K.sendToFile()
     K.printMeasures()
 
