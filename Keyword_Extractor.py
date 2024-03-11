@@ -186,12 +186,20 @@ class Extractor:
                 tmp_table.append(["general", skill, count_jb, count_cv, m1, m2])
         self.table = tmp_table
 
+    def print_missing_skills(self):
+        df = pd.DataFrame(self.table, columns=["Skill Type", "Skill", "Frequency in Job Description", "Frequency in CV", "Difference", "Modified Frequency"])
+        print("Top 5 missing hard skills")
+        print(df[df["Skill Type"] == "hard"].head(5))
+        print("Top 5 missing soft skills")
+        print(df[df["Skill Type"] == "soft"].head(5))
+
 
 def main():
     K = Extractor()
     K.make_table()
     K.sendToFile()
     K.printMeasures()
+    K.print_missing_skills()
 
 
 if __name__ == "__main__":
