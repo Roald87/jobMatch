@@ -68,7 +68,6 @@ MS Sql Server
 NoSql
 No-Sql
 Hadoop
-Spark
 Java
 Algorithms
 Databases
