@@ -174,6 +174,7 @@ class Extractor:
                 skill in self.hardskills
                 or skill in self.softskills
                 or skill in graylist
+                or len(skill) == 0
             ):
                 continue
             count_jb = tuple[1]
