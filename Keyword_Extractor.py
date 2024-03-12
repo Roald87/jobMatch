@@ -7,6 +7,9 @@ import sys
 import nltk
 import pandas as pd
 
+pd.set_option('display.max_columns', 10)
+pd.set_option('display.width', 200)
+
 nltk.download("punkt")
 nltk.download("averaged_perceptron_tagger")
 
@@ -188,10 +191,9 @@ class Extractor:
 
     def print_missing_skills(self):
         df = pd.DataFrame(self.table, columns=["Skill Type", "Skill", "Frequency in Job Description", "Frequency in CV", "Difference", "Modified Frequency"])
-        print("Top 5 missing hard skills")
-        print(df[df["Skill Type"] == "hard"].head(5))
-        print("Top 5 missing soft skills")
-        print(df[df["Skill Type"] == "soft"].head(5))
+        for skill in "hard soft general".split():
+            print(f"Top 5 missing {skill} skills by difference")
+            print(df[df["Skill Type"] == skill].sort_values(by="Difference", ascending=False).head(5))
 
 
 def main():
