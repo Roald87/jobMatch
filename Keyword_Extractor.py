@@ -7,8 +7,8 @@ import sys
 import nltk
 import pandas as pd
 
-pd.set_option('display.max_columns', 10)
-pd.set_option('display.width', 200)
+pd.set_option("display.max_columns", 10)
+pd.set_option("display.width", 200)
 
 nltk.download("punkt")
 nltk.download("averaged_perceptron_tagger")
@@ -86,7 +86,9 @@ class Extractor:
         )
         df_sorted = df.sort_values(by=["job", "cv"], ascending=[False, False])
         df_sorted.to_csv(
-            self.outFile, columns=["type", "skill", "job", "cv", "m1", "m2"], index=False
+            self.outFile,
+            columns=["type", "skill", "job", "cv", "m1", "m2"],
+            index=False,
         )
 
     def printMeasures(self):
@@ -191,10 +193,24 @@ class Extractor:
         self.table = tmp_table
 
     def print_missing_skills(self):
-        df = pd.DataFrame(self.table, columns=["Skill Type", "Skill", "Frequency in Job Description", "Frequency in CV", "Difference", "Modified Frequency"])
+        df = pd.DataFrame(
+            self.table,
+            columns=[
+                "Skill Type",
+                "Skill",
+                "Frequency in Job Description",
+                "Frequency in CV",
+                "Difference",
+                "Modified Frequency",
+            ],
+        )
         for skill in "hard soft general".split():
             print(f"Top 5 missing {skill} skills by difference")
-            print(df[df["Skill Type"] == skill].sort_values(by="Difference", ascending=False).head(5))
+            print(
+                df[df["Skill Type"] == skill]
+                .sort_values(by="Difference", ascending=False)
+                .head(5)
+            )
 
 
 def main():

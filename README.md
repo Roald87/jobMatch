@@ -7,7 +7,7 @@ Copy the job description in a txt file and save it with a descriptive name (e.g.
 ```
 $ git clone https://github.com/roald87/jobMatch
 $ cd jobMatch
-$ conda create -f conda.yml 
+$ conda create -f conda.yml
 $ pip install -r requirements.txt
 $ cp tesla_job_description.txt my_resume.txt jobMatch
 $ python Keyword_Extractor.py tesla_jobdescription.txt my_resume.txt
@@ -30,3 +30,10 @@ The program can be easily modified to suit individual needs. The download consis
 The program considers key-phrases, which consists of one (keyword or mono-gram), two (bi-gram), or three (tri-gram) words. The function build_ngram_distribution can be easily modified to consider as many n-grams as needed, but short key-phrases work best.
 
 In the case of the general language, we are only interested in the relevant parts of speech, so the program removes unimportant words such as conjunctions or interjections, and keeps only nouns, verbs, adjectives, and adverbs. Some people might consider that for example verbs are not important in a resume, so this can also be modified. In the function makeTable, the vriable parts_of_speech contains a list of the relevant parts of speech, according to the possible POS tags in NLTK (https://stackoverflow.com/questions/15388831/what-are-all-possible-pos-tags-of-nltk). The program will only consider phrases where all the words are in the parts_of_speech variable. For example, the phrase "Excellent communication skills" will be considered, since the three words are either adjectives or nouns, while the phrase "If you are" will not, because "if" is not a relevant POS. Additionally, there is a graylist variable, that will also remove words that are not relevant. For example, the word "you" in the job description context might not be relevant, and you might not want it to be considered. Simply add or remove POS tags in the parts_of_speech variable, or individual words in the graylist according to your preferences.
+
+## Development
+
+```commandline
+pre-commit install
+
+```

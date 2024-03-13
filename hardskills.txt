@@ -10,7 +10,7 @@ Microsoft Excel
 MS Excel
 Microsoft Office
 MS Office
-Software Development 
+Software Development
 HTML
 Retention
 SQL
@@ -22,7 +22,7 @@ Apache Airflow
 Apache Impala
 Apache Drill
 Apache Hadoop
-Data 
+Data
 Certification
 Data Collection
 Datasets
@@ -37,7 +37,7 @@ Sql Server
 Computer Science
 Statistical Modeling
 Applied Data Science
-Hiring	
+Hiring
 Technical
 Database
 Education
