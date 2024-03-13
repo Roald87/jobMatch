@@ -22,7 +22,7 @@ class Extractor:
         self.hardskills = self.load_skills("hardskills.txt")
         self.jb_distribution = self.build_ngram_distribution(sys.argv[-2])
         self.cv_distribution = self.build_ngram_distribution(sys.argv[-1])
-        self.table = []
+        self.table = pd.DataFrame()
         self.outFile = "Extracted_keywords.csv"
 
     def load_skills(self, filename):
@@ -181,11 +181,8 @@ class Extractor:
                 m1 = self.measure1(count_jb, count_cv)
                 m2 = self.measure2(count_jb, count_cv)
                 tmp_table.append(["general", skill, count_jb, count_cv, m1, m2])
-        self.table = tmp_table
-
-    def print_missing_skills(self):
-        df = pd.DataFrame(
-            self.table,
+        self.table = pd.DataFrame(
+            tmp_table,
             columns=[
                 "Skill Type",
                 "Skill",
@@ -195,10 +192,12 @@ class Extractor:
                 "Modified Frequency",
             ],
         )
+
+    def print_missing_skills(self):
         for skill in "hard soft general".split():
             print(f"Top 5 missing {skill} skills by difference")
             print(
-                df[df["Skill Type"] == skill]
+                self.table[self.table["Skill Type"] == skill]
                 .sort_values(by="Difference", ascending=False)
                 .head(5)
             )
