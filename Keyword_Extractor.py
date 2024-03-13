@@ -3,6 +3,8 @@ import math
 import operator
 import os
 import re
+import sys
+from collections import defaultdict
 
 import nltk
 import pandas as pd
@@ -15,21 +17,17 @@ nltk.download("averaged_perceptron_tagger")
 
 
 class Extractor:
-    def __init__(self, job_description_file, cv_file):
+    def __init__(self):
         self.softskills = self.load_skills("softskills.txt")
         self.hardskills = self.load_skills("hardskills.txt")
-        self.jb_distribution = self.build_ngram_distribution(job_description_file)
-        self.cv_distribution = self.build_ngram_distribution(cv_file)
+        self.jb_distribution = self.build_ngram_distribution(sys.argv[-2])
+        self.cv_distribution = self.build_ngram_distribution(sys.argv[-1])
         self.table = []
         self.outFile = "Extracted_keywords.csv"
 
     def load_skills(self, filename):
-        f = open(filename, "r", encoding="utf-8")
-        skills = []
-        for line in f:
-            # removing punctuation and upper cases
-            skills.append(self.clean_phrase(line))
-        f.close()
+        with open(filename, "r") as f:
+            skills = [self.clean_phrase(line) for line in f]
         return list(set(skills))  # remove duplicates
 
     def build_ngram_distribution(self, filename):
@@ -40,17 +38,14 @@ class Extractor:
         return dist
 
     def parse_file(self, filename, n):
-        f = open(filename, "r", encoding="utf-8")
-        results = {}
-        for line in f:
-            words = self.clean_phrase(line).split(" ")
-            ngrams = self.ngrams(words, n)
-            for tup in ngrams:
-                phrase = " ".join(word.strip() for word in tup if len(word) > 0)
-                if phrase in results.keys():
+        with open(filename, "r") as f:
+            results = defaultdict(int)
+            for line in f:
+                words = self.clean_phrase(line).split(" ")
+                ngrams = self.ngrams(words, n)
+                for ngram in ngrams:
+                    phrase = " ".join(word.strip() for word in ngram if len(word) > 0)
                     results[phrase] += 1
-                else:
-                    results[phrase] = 1
         return results
 
     def clean_phrase(self, line):
@@ -85,11 +80,7 @@ class Extractor:
             self.table, columns=["type", "skill", "job", "cv", "m1", "m2"]
         )
         df_sorted = df.sort_values(by=["job", "cv"], ascending=[False, False])
-        df_sorted.to_csv(
-            self.outFile,
-            columns=["type", "skill", "job", "cv", "m1", "m2"],
-            index=False,
-        )
+        df_sorted.to_csv(self.outFile, index=False)
 
     def printMeasures(self):
         n_rows = len(self.table)
