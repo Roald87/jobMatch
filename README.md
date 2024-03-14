@@ -4,13 +4,21 @@ If you would like to try it out, all you would need to do is download the code f
 
 Copy the job description in a txt file and save it with a descriptive name (e.g. tesla_job_description.txt). Do the same with your resume (e.g. my_resume.txt).
 
-```
+```bash
+# Clone the repository
 $ git clone https://github.com/roald87/jobMatch
+# Navagate into the folder
 $ cd jobMatch
+# Create a new virtual environment with python from the conda.yml file. You need Anaconda or Miniconda for this step!
 $ conda create -f conda.yml
+# Activate the virtual environment you just created
+$ conda activate job-match312
+# Install the required packaged into the virtual environment you activated in the previous step
 $ pip install -r requirements.txt
-$ cp tesla_job_description.txt my_resume.txt jobMatch
-$ python Keyword_Extractor.py tesla_jobdescription.txt my_resume.txt
+# Creates a new position in the jobs/ folder, paste your cv and the job description in the two generated files
+$ python.exe .\new_job.py --company "some company" --position "software engineer"
+# Extract the keywords and see your score and missing skills
+$ python Keyword_Extractor.py jobs/some-company-software-engineer/some-company-software-engineer-job.txt jobs/some-company-software-engineer/some-company-software-engineer-cv.txt
 ```
 A file will be created, called Extracted_Keywords.csv, which will have 7 columns and many rows. Here are the first 6 rows of an example I ran:
 
