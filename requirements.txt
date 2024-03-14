@@ -2,3 +2,4 @@ pandas==2.2.1
 nltk==3.8.1
 ruff==0.3.2
 pre-commit==3.6.2
+matplotlib==3.8.3

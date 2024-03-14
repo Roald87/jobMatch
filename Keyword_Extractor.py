@@ -7,6 +7,7 @@ from collections import defaultdict
 
 import nltk
 import pandas as pd
+from matplotlib import pyplot as plt
 
 pd.set_option("display.max_columns", 10)
 pd.set_option("display.width", 200)
@@ -74,6 +75,8 @@ class Extractor:
         self.hardskills = load_skills("hardskills.txt")
         self.jb_distribution = build_ngram_distribution(job_description_file)
         self.cv_distribution = build_ngram_distribution(cv_file)
+        self.base_path = os.path.dirname(job_description_file)
+        self.results_filename = self.base_path + "/run_results.csv"
         self.table = pd.DataFrame()
         self.outFile = "Extracted_keywords.csv"
 
@@ -104,6 +107,47 @@ class Extractor:
             print(
                 f"Cosine similarity for {skill} skills: {cosine_similarity(v1.values, v2.values)}"
             )
+
+    def save_measures(self):
+        scores = []
+        skills = ["hard", "soft", "general"]
+        for skill in skills:
+            v1 = self.table[self.table["Skill Type"] == skill][
+                "Frequency in Job Description"
+            ]
+            v2 = self.table[self.table["Skill Type"] == skill]["Frequency in CV"]
+            scores.append(cosine_similarity(v1.values, v2.values))
+
+        # Define the header
+        header = ",".join(["Run number"] + skills)
+
+        # Initialize run number
+        run_number = 0
+
+        # Check if the file exists
+        if os.path.exists(self.results_filename):
+            # Read the file to find the last run number
+            with open(self.results_filename, "r") as file:
+                lines = file.readlines()
+                if len(lines) > 1:  # Check if there are any runs logged
+                    last_line = lines[-1]
+                    run_number = int(last_line.split(",")[0])
+
+        # Increment the run number
+        run_number += 1
+
+        # Append the new data to the file
+        with open(self.results_filename, "a") as file:
+            # If the file was newly created, write the header first
+            if run_number == 1:
+                file.write(f"{header}\n")
+            file.write(",".join([str(score) for score in [run_number] + scores]) + "\n")
+
+    def plot_progress(self):
+        scores = pd.read_csv(self.results_filename, index_col=0)
+
+        scores.plot(subplots=True, marker="o", linestyle="-")
+        plt.show()
 
     def make_table(self):
         # I am interested in verbs, nouns, adverbs, and adjectives
@@ -211,5 +255,7 @@ if __name__ == "__main__":
     K = Extractor(job_description_file=args.job, cv_file=args.cv)
     K.make_table()
     K.send_to_file()
+    K.save_measures()
     K.print_measures()
     K.print_missing_skills()
+    K.plot_progress()
