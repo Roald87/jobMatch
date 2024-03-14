@@ -15,62 +15,69 @@ nltk.download("punkt")
 nltk.download("averaged_perceptron_tagger")
 
 
+def clean_phrase(line):
+    return re.sub(r"[^\w\s]", "", line.strip().lower())
+
+
+def ngrams(input_list, n):
+    return list(zip(*[input_list[i:] for i in range(n)]))
+
+
+def measure1(v1, v2):
+    return v1 - v2
+
+
+def measure2(v1, v2):
+    return max(v1 - v2, 0)
+
+
+def cosine_similarity(v1, v2):
+    """Compute cosine similarity of v1 to v2: (v1 dot v2)/{||v1||*||v2||)"""
+    sumxx, sumxy, sumyy = 0, 0, 0
+    for i in range(len(v1)):
+        x = v1[i]
+        y = v2[i]
+        sumxx += x * x
+        sumyy += y * y
+        sumxy += x * y
+    return sumxy / math.sqrt(sumxx * sumyy)
+
+
+def parse_file(filename, n):
+    with open(filename, "r") as f:
+        results = defaultdict(int)
+        for line in f:
+            words = clean_phrase(line).split(" ")
+            for ngram in ngrams(words, n):
+                phrase = " ".join(word.strip() for word in ngram if len(word) > 0)
+                results[phrase] += 1
+    return results
+
+
+def load_skills(filename):
+    with open(filename, "r") as f:
+        skills = [clean_phrase(line) for line in f]
+    return list(set(skills))  # remove duplicates
+
+
+def build_ngram_distribution(filename):
+    n_s = [1, 2, 3]  # mono-, bi-, and tri-grams
+    dist = {}
+    for n in n_s:
+        dist.update(parse_file(filename, n))
+    return dist
+
+
 class Extractor:
     def __init__(self, job_description_file, cv_file):
-        self.softskills = self.load_skills("softskills.txt")
-        self.hardskills = self.load_skills("hardskills.txt")
-        self.jb_distribution = self.build_ngram_distribution(job_description_file)
-        self.cv_distribution = self.build_ngram_distribution(cv_file)
+        self.softskills = load_skills("softskills.txt")
+        self.hardskills = load_skills("hardskills.txt")
+        self.jb_distribution = build_ngram_distribution(job_description_file)
+        self.cv_distribution = build_ngram_distribution(cv_file)
         self.table = pd.DataFrame()
         self.outFile = "Extracted_keywords.csv"
 
-    def load_skills(self, filename):
-        with open(filename, "r") as f:
-            skills = [self.clean_phrase(line) for line in f]
-        return list(set(skills))  # remove duplicates
-
-    def build_ngram_distribution(self, filename):
-        n_s = [1, 2, 3]  # mono-, bi-, and tri-grams
-        dist = {}
-        for n in n_s:
-            dist.update(self.parse_file(filename, n))
-        return dist
-
-    def parse_file(self, filename, n):
-        with open(filename, "r") as f:
-            results = defaultdict(int)
-            for line in f:
-                words = self.clean_phrase(line).split(" ")
-                ngrams = self.ngrams(words, n)
-                for ngram in ngrams:
-                    phrase = " ".join(word.strip() for word in ngram if len(word) > 0)
-                    results[phrase] += 1
-        return results
-
-    def clean_phrase(self, line):
-        return re.sub(r"[^\w\s]", "", line.strip().lower())
-
-    def ngrams(self, input_list, n):
-        return list(zip(*[input_list[i:] for i in range(n)]))
-
-    def measure1(self, v1, v2):
-        return v1 - v2
-
-    def measure2(self, v1, v2):
-        return max(v1 - v2, 0)
-
-    def measure3(self, v1, v2):  # cosine similarity
-        # "compute cosine similarity of v1 to v2: (v1 dot v2)/{||v1||*||v2||)"
-        sumxx, sumxy, sumyy = 0, 0, 0
-        for i in range(len(v1)):
-            x = v1[i]
-            y = v2[i]
-            sumxx += x * x
-            sumyy += y * y
-            sumxy += x * y
-        return sumxy / math.sqrt(sumxx * sumyy)
-
-    def sendToFile(self):
+    def send_to_file(self):
         try:
             os.remove(self.outFile)
         except OSError:
@@ -81,13 +88,13 @@ class Extractor:
         df_sorted = df.sort_values(by=["job", "cv"], ascending=[False, False])
         df_sorted.to_csv(self.outFile, index=False)
 
-    def printMeasures(self):
+    def print_measures(self):
         print(f"Measure 1: {self.table["Difference"].sum()}")
         print(f"Measure 2: {self.table["Modified Frequency"].sum()}")
 
         v1 = self.table["Frequency in Job Description"]
         v2 = self.table["Frequency in CV"]
-        print(f"Measure 3 (cosine sim): {self.measure3(v1.values, v2.values)}")
+        print(f"Measure 3 (cosine sim): {cosine_similarity(v1.values, v2.values)}")
 
         for skill in ["hard", "soft", "general"]:
             v1 = self.table[self.table["Skill Type"] == skill][
@@ -95,7 +102,7 @@ class Extractor:
             ]
             v2 = self.table[self.table["Skill Type"] == skill]["Frequency in CV"]
             print(
-                f"Cosine similarity for {skill} skills: {self.measure3(v1.values, v2.values)}"
+                f"Cosine similarity for {skill} skills: {cosine_similarity(v1.values, v2.values)}"
             )
 
     def make_table(self):
@@ -131,8 +138,8 @@ class Extractor:
                     count_cv = self.cv_distribution[skill]
                 else:
                     count_cv = 0
-                m1 = self.measure1(count_jb, count_cv)
-                m2 = self.measure2(count_jb, count_cv)
+                m1 = measure1(count_jb, count_cv)
+                m2 = measure2(count_jb, count_cv)
                 tmp_table.append(["hard", skill, count_jb, count_cv, m1, m2])
 
         for skill in self.softskills:
@@ -142,18 +149,17 @@ class Extractor:
                     count_cv = self.cv_distribution[skill]
                 else:
                     count_cv = 0
-                m1 = self.measure1(count_jb, count_cv)
-                m2 = self.measure2(count_jb, count_cv)
+                m1 = measure1(count_jb, count_cv)
+                m2 = measure2(count_jb, count_cv)
                 tmp_table.append(["soft", skill, count_jb, count_cv, m1, m2])
 
         # And now for the general language of the job description:
         # Sort the distribution by the words most used in the job description
-
         general_language = sorted(
             self.jb_distribution.items(), key=operator.itemgetter(1), reverse=True
         )
-        for tuple in general_language:
-            skill = tuple[0]
+        for word_frequency in general_language:
+            skill = word_frequency[0]
             if (
                 skill in self.hardskills
                 or skill in self.softskills
@@ -161,7 +167,7 @@ class Extractor:
                 or len(skill) == 0
             ):
                 continue
-            count_jb = tuple[1]
+            count_jb = word_frequency[1]
             tokens = nltk.word_tokenize(skill)
             parts = nltk.pos_tag(tokens)
             if all([parts[i][1] in parts_of_speech for i in range(len(parts))]):
@@ -169,8 +175,8 @@ class Extractor:
                     count_cv = self.cv_distribution[skill]
                 else:
                     count_cv = 0
-                m1 = self.measure1(count_jb, count_cv)
-                m2 = self.measure2(count_jb, count_cv)
+                m1 = measure1(count_jb, count_cv)
+                m2 = measure2(count_jb, count_cv)
                 tmp_table.append(["general", skill, count_jb, count_cv, m1, m2])
         self.table = pd.DataFrame(
             tmp_table,
@@ -204,6 +210,6 @@ if __name__ == "__main__":
 
     K = Extractor(job_description_file=args.job, cv_file=args.cv)
     K.make_table()
-    K.sendToFile()
-    K.printMeasures()
+    K.send_to_file()
+    K.print_measures()
     K.print_missing_skills()
