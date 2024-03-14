@@ -3,7 +3,6 @@ import math
 import operator
 import os
 import re
-import sys
 from collections import defaultdict
 
 import nltk
@@ -17,11 +16,11 @@ nltk.download("averaged_perceptron_tagger")
 
 
 class Extractor:
-    def __init__(self):
+    def __init__(self, job_description_file, cv_file):
         self.softskills = self.load_skills("softskills.txt")
         self.hardskills = self.load_skills("hardskills.txt")
-        self.jb_distribution = self.build_ngram_distribution(sys.argv[-2])
-        self.cv_distribution = self.build_ngram_distribution(sys.argv[-1])
+        self.jb_distribution = self.build_ngram_distribution(job_description_file)
+        self.cv_distribution = self.build_ngram_distribution(cv_file)
         self.table = pd.DataFrame()
         self.outFile = "Extracted_keywords.csv"
 
@@ -83,28 +82,20 @@ class Extractor:
         df_sorted.to_csv(self.outFile, index=False)
 
     def printMeasures(self):
-        n_rows = len(self.table)
-        v1 = [self.table[m1][4] for m1 in range(n_rows)]
-        v2 = [self.table[m2][5] for m2 in range(n_rows)]
-        print("Measure 1: ", str(sum(v1)))
-        print("Measure 2: ", str(sum(v2)))
+        print(f"Measure 1: {self.table["Difference"].sum()}")
+        print(f"Measure 2: {self.table["Modified Frequency"].sum()}")
 
-        v1 = [self.table[jb][2] for jb in range(n_rows)]
-        v2 = [self.table[cv][3] for cv in range(n_rows)]
-        print("Measure 3 (cosine sim): ", str(self.measure3(v1, v2)))
+        v1 = self.table["Frequency in Job Description"]
+        v2 = self.table["Frequency in CV"]
+        print(f"Measure 3 (cosine sim): {self.measure3(v1.values, v2.values)}")
 
         for skill in ["hard", "soft", "general"]:
-            v1 = [
-                self.table[jb][2] for jb in range(n_rows) if self.table[jb][0] == skill
+            v1 = self.table[self.table["Skill Type"] == skill][
+                "Frequency in Job Description"
             ]
-            v2 = [
-                self.table[cv][3] for cv in range(n_rows) if self.table[cv][0] == skill
-            ]
+            v2 = self.table[self.table["Skill Type"] == skill]["Frequency in CV"]
             print(
-                "Cosine similarity for "
-                + skill
-                + " skills: "
-                + str(self.measure3(v1, v2))
+                f"Cosine similarity for {skill} skills: {self.measure3(v1.values, v2.values)}"
             )
 
     def make_table(self):
