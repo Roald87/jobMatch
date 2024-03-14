@@ -1,8 +1,8 @@
+import argparse
 import math
 import operator
 import os
 import re
-import sys
 
 import nltk
 import pandas as pd
@@ -15,16 +15,16 @@ nltk.download("averaged_perceptron_tagger")
 
 
 class Extractor:
-    def __init__(self):
+    def __init__(self, job_description_file, cv_file):
         self.softskills = self.load_skills("softskills.txt")
         self.hardskills = self.load_skills("hardskills.txt")
-        self.jb_distribution = self.build_ngram_distribution(sys.argv[-2])
-        self.cv_distribution = self.build_ngram_distribution(sys.argv[-1])
+        self.jb_distribution = self.build_ngram_distribution(job_description_file)
+        self.cv_distribution = self.build_ngram_distribution(cv_file)
         self.table = []
         self.outFile = "Extracted_keywords.csv"
 
     def load_skills(self, filename):
-        f = open(filename, "r")
+        f = open(filename, "r", encoding="utf-8")
         skills = []
         for line in f:
             # removing punctuation and upper cases
@@ -40,7 +40,7 @@ class Extractor:
         return dist
 
     def parse_file(self, filename, n):
-        f = open(filename, "r")
+        f = open(filename, "r", encoding="utf-8")
         results = {}
         for line in f:
             words = self.clean_phrase(line).split(" ")
@@ -213,13 +213,16 @@ class Extractor:
             )
 
 
-def main():
-    K = Extractor()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Compare a job description with your cv"
+    )
+    parser.add_argument("--job", required=True, help="The job description")
+    parser.add_argument("--cv", required=True, help="Your CV")
+    args = parser.parse_args()
+
+    K = Extractor(job_description_file=args.job, cv_file=args.cv)
     K.make_table()
     K.sendToFile()
     K.printMeasures()
     K.print_missing_skills()
-
-
-if __name__ == "__main__":
-    main()

@@ -18,7 +18,7 @@ $ pip install -r requirements.txt
 # Creates a new position in the jobs/ folder, paste your cv and the job description in the two generated files
 $ python.exe .\new_job.py --company "some company" --position "software engineer"
 # Extract the keywords and see your score and missing skills
-$ python Keyword_Extractor.py jobs/some-company-software-engineer/some-company-software-engineer-job.txt jobs/some-company-software-engineer/some-company-software-engineer-cv.txt
+$ python Keyword_Extractor.py --job jobs/some-company-software-engineer/some-company-software-engineer-job.txt --cv jobs/some-company-software-engineer/some-company-software-engineer-cv.txt
 ```
 A file will be created, called Extracted_Keywords.csv, which will have 7 columns and many rows. Here are the first 6 rows of an example I ran:
 
