@@ -97,7 +97,7 @@ class Extractor:
 
         v1 = self.table["Frequency in Job Description"]
         v2 = self.table["Frequency in CV"]
-        print(f"Measure 3 (cosine sim): {cosine_similarity(v1.values, v2.values)}")
+        print(f"Measure 3 (cosine sim): {cosine_similarity(v1.values, v2.values)}\n")
 
         for skill in ["hard", "soft", "general"]:
             v1 = self.table[self.table["Skill Type"] == skill][
@@ -107,6 +107,7 @@ class Extractor:
             print(
                 f"Cosine similarity for {skill} skills: {cosine_similarity(v1.values, v2.values)}"
             )
+        print()
 
     def save_measures(self):
         scores = []
@@ -242,6 +243,7 @@ class Extractor:
                 .sort_values(by="Difference", ascending=False)
                 .head(5)
             )
+            print()
 
 
 if __name__ == "__main__":
