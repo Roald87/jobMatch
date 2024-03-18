@@ -85,11 +85,11 @@ class Extractor:
             os.remove(self.outFile)
         except OSError:
             pass
-        df = pd.DataFrame(
-            self.table, columns=["type", "skill", "job", "cv", "m1", "m2"]
-        )
-        df_sorted = df.sort_values(by=["job", "cv"], ascending=[False, False])
-        df_sorted.to_csv(self.outFile, index=False)
+
+        self.table.sort_values(
+            by=["Frequency in Job Description", "Frequency in CV"],
+            ascending=[False, False],
+        ).to_csv(self.outFile, index=False)
 
     def print_measures(self):
         print(f"Measure 1: {self.table["Difference"].sum()}")
