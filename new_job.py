@@ -1,6 +1,5 @@
 import argparse
 import os
-import subprocess
 
 
 def create_new_job(company, position):
@@ -21,9 +20,6 @@ def create_new_job(company, position):
     job_path = os.path.join(folder_path, job_file)
     open(cv_path, "a").close()
     open(job_path, "a").close()
-
-    # Initialize a git repository
-    subprocess.run(["git", "init", folder_path])
 
 
 if __name__ == "__main__":
