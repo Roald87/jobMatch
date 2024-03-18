@@ -20,6 +20,11 @@ $ python.exe .\new_job.py --company "some company" --position "software engineer
 # Extract the keywords and see your score and missing skills
 $ python Keyword_Extractor.py --job jobs/some-company-software-engineer/some-company-software-engineer-job.txt --cv jobs/some-company-software-engineer/some-company-software-engineer-cv.txt
 ```
+
+Each time you run the analyses you see a plot that shows the score for each run. This way its easy to see if your cv improved or not.
+
+![](keyword-match.png)
+
 A file will be created, called Extracted_Keywords.csv, which will have 7 columns and many rows. Here are the first 6 rows of an example I ran:
 
 ```
@@ -43,5 +48,4 @@ In the case of the general language, we are only interested in the relevant part
 
 ```commandline
 pre-commit install
-
 ```
