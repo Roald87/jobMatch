@@ -63,6 +63,7 @@ Statistics
 Programming
 python
 Python
+Lua
 Microsoft Sql Server
 MS Sql Server
 NoSql
@@ -255,3 +256,15 @@ Engineering discipline
 TwinCAT
 PLC programming
 PLC
+mechatronic
+mechatronical systems
+industrial automation
+automation
+real-time
+real-time systems
+embedded systems
+embedded control systems
+prototype
+prototyping
+instrumentation
+test cases
