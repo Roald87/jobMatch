@@ -17,7 +17,7 @@ nltk.download("averaged_perceptron_tagger")
 
 
 def clean_phrase(line):
-    return re.sub(r"[^\w\s]", "", line.strip().lower())
+    return re.sub(r"[^\w\s&]", "", line.strip().lower())
 
 
 def ngrams(input_list, n):
